@@ -2,32 +2,77 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background: 0, 0%, 94%;
+    --foreground: 0, 0%, 5%;
+
+    --card: 0, 0%, 94%;
+    --card-foreground: 0, 0%, 4%;
+
+    --primary: 0, 0%, 0%;
+    --primary-foreground: 0, 0%, 94%;
+
+    --secondary: 190, 100%, 19%;
+    --secondary-foreground: 0, 0%, 90%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0, 0%, 20%;
+
+    --muted: 222.2, 0%, 10%;
+    --muted-foreground: 0, 0%, 30%;
+
+    --accent: 0, 0%, 5%;
+    --accent-foreground: 0, 0%, 90%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 0, 0%, 50%;
+
+    --input: 0, 0%, 60%;
+    --ring: 0, 0%, 70%;
+
+    --radius: 0.5rem;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+.fx-c {
+  @apply flex flex-col;
+}
+.items-c {
+  @apply flex items-center;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.h1 {
+  @apply text-4xl font-bold;
+}
+.h2 {
+  @apply text-3xl font-bold;
+}
+.h3 {
+  @apply text-2xl font-bold;
+}
+.h4 {
+  @apply text-xl font-bold;
+}
+.h5 {
+  @apply text-lg font-bold;
+}
+.h6 {
+  @apply text-base font-bold;
+}
+p {
+  @apply text-base;
+}
+.pxs {
+  @apply px-4 md:px-24;
 }
