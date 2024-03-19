@@ -17,6 +17,7 @@ export const Client = ({ children }: { children: React.ReactNode }) => {
       <QueryClientProvider client={queryClient}>
         <Toaster />
         <AuthProvider>{children}</AuthProvider>
+        <ReactQueryDevtools buttonPosition="bottom-left" />
       </QueryClientProvider>
     </ThemeProvider>
   );

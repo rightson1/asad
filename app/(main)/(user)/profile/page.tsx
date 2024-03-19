@@ -9,7 +9,9 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -21,6 +23,7 @@ import {
 } from "@/components/helpers/functions";
 import { useUpdateUser } from "@/utils/hooks/useUser";
 import { IUserFetched } from "@/types";
+import { kenyanCounties } from "@/utils/data";
 const Profile = () => {
   const { user, logout, fetchUser } = useUser();
   const [thumbnail, setThumbnail] = React.useState<File | null>(null);
@@ -28,7 +31,8 @@ const Profile = () => {
   const { mutateAsync: editUser } = useUpdateUser();
   const [values, setValues] = React.useState({
     displayName: user.displayName,
-    seller: user.isSeller || false,
+    isSeller: user.isSeller || false,
+    county: user.county || "",
   });
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -62,7 +66,6 @@ const Profile = () => {
       },
     });
   };
-
   return (
     <form
       onSubmit={submit}
@@ -70,7 +73,10 @@ const Profile = () => {
     >
       <div className="relative fx-c justify-center items-center gap-3 w-full py-20 ">
         <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarImage
+            src={user.thumbnail || "https://github.com/shadcn.png"}
+            alt="@shadcn"
+          />
           <AvatarFallback>
             {user.displayName?.charAt(0).toUpperCase() || "S"}
           </AvatarFallback>
@@ -103,11 +109,11 @@ const Profile = () => {
           <div className="">
             <Label htmlFor="seller">Seller</Label>
             <Select
-              value={values.seller ? "true" : "no"}
+              value={values.isSeller ? "true" : "no"}
               onValueChange={(value) =>
                 setValues({
                   ...values,
-                  seller: value === "true" ? true : false,
+                  isSeller: value === "true" ? true : false,
                 })
               }
             >
@@ -120,9 +126,38 @@ const Profile = () => {
               </SelectContent>
             </Select>
           </div>
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="county">County</Label>
+            <Select
+              name="county"
+              required
+              defaultValue={values.county}
+              onValueChange={(value) => {
+                setValues((prev) => ({ ...prev, county: value }));
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select County" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Counties</SelectLabel>
+                  {kenyanCounties.map((county, index) => (
+                    <SelectItem key={index} value={county}>
+                      {county}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="col-span-2">
-            <Label htmlFor="thumbnail">Thumbnail</Label>
-            <SingleImageInputWithView file={thumbnail} setFile={setThumbnail} />
+            <Label htmlFor="thumbnail">Thumbnails</Label>
+            <SingleImageInputWithView
+              imageUrl={user.thumbnail}
+              file={thumbnail}
+              setFile={setThumbnail}
+            />
           </div>
         </div>
       </div>

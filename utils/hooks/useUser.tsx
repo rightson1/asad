@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { IUser, IUserFetched } from "@/types";
 import toast from "react-hot-toast";
+import { eCheck } from "@/components/helpers/functions";
 
 export const useUpdateUser = () => {
   return useMutation({
@@ -11,5 +12,13 @@ export const useUpdateUser = () => {
       }
     ) => axios.put("/api/users", user),
     onError: (error) => toast.error(error.message),
+  });
+};
+//get all users who are sellers
+
+export const useGetAllSellers = () => {
+  return useQuery<IUserFetched[]>({
+    queryKey: ["sellers"],
+    queryFn: () => axios.get("/api/users/all").then(eCheck),
   });
 };

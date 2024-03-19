@@ -29,6 +29,10 @@ const User = new Schema(
       type: Boolean,
       default: false,
     },
+    county: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

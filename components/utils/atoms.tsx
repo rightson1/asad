@@ -3,6 +3,15 @@ import { FaAngleRight } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import { FaLocationDot } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 type BreadcrumbProps = {
   items: {
     label: string;

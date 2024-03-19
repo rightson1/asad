@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { List_Turf } from "../turf/create";
 const Navbar = ({ home = false }: { home?: boolean }) => {
   const { handleGoogleLogin, handleSignIn, fUser } = useUser();
   type TLink = {
@@ -54,14 +55,18 @@ const Navbar = ({ home = false }: { home?: boolean }) => {
         <div className="flex">
           {fUser ? (
             <div className="items-c gap-2">
-              <Button
-                className={` shadow-md 
+              <List_Turf
+                trigger={
+                  <Button
+                    className={` shadow-md 
       ${home ? "text-background bg-black/30" : "text-black"}
       `}
-                variant={"ghost"}
-              >
-                List your Turf
-              </Button>
+                    variant={"ghost"}
+                  >
+                    List your Turf
+                  </Button>
+                }
+              />
               <Button
                 className={` shadow-md
       ${home ? "text-background" : "text-black"}

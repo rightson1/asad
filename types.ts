@@ -22,6 +22,19 @@ export interface IFUser {
 export interface IUser extends IFUser {
   status: "active" | "banned";
   isSeller: boolean;
+  county?: string;
   thumbnail?: string;
 }
 export interface IUserFetched extends IUser, IFetched {}
+export interface ITurfBase {
+  title: string;
+  size: string;
+  hourlyRate: number;
+  dailyRate: number;
+  county: string;
+  location: string;
+  description: string;
+  thumbnail: string;
+  images: string[];
+  owner: string;
+}

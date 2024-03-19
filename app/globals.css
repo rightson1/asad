@@ -51,7 +51,9 @@
 .items-c {
   @apply flex items-center;
 }
-
+.fb {
+  @apply flex items-center justify-between;
+}
 .h1 {
   @apply text-4xl font-bold;
 }

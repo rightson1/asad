@@ -54,11 +54,6 @@ export const CustomModal = ({
           <DialogHeader className="border-b pb-4">
             <div className="fb">
               <h4 className="h3">{title}</h4>
-              <DialogClose asChild>
-                <Button variant="outline" size="icon" className="w-8 h-8">
-                  <IoClose className="text-xl" />
-                </Button>
-              </DialogClose>
             </div>
           </DialogHeader>
 
