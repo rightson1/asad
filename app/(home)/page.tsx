@@ -20,7 +20,7 @@ export default function Home() {
           height={1000}
           width={1000}
           alt="home-bg"
-          className="object-cover -mt-24 absolute w-full h-full z-[-2] top-0 left-0  "
+          className="object-cover object-left-top -mt-24 absolute w-full h-full z-[-2] top-0 left-0  "
         />
 
         <div className="flex flex-col -mt-10 ">

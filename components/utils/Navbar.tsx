@@ -1,9 +1,23 @@
+"use client";
 import Image from "next/image";
 import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CiUser } from "react-icons/ci";
+import { useUser } from "@/utils/authContextUser";
+import { IoIosNotificationsOutline } from "react-icons/io";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const Navbar = ({ home = false }: { home?: boolean }) => {
+  const { handleGoogleLogin, handleSignIn, fUser } = useUser();
   type TLink = {
     link: string;
     name: string;
@@ -38,23 +52,78 @@ const Navbar = ({ home = false }: { home?: boolean }) => {
           </div>
         </div>
         <div className="flex">
-          <Button
-            variant={"ghost"}
-            className={`
+          {fUser ? (
+            <div className="items-c gap-2">
+              <Button
+                className={` shadow-md 
+      ${home ? "text-background bg-black/30" : "text-black"}
+      `}
+                variant={"ghost"}
+              >
+                List your Turf
+              </Button>
+              <Button
+                className={` shadow-md
       ${home ? "text-background" : "text-black"}
       `}
-          >
-            <CiUser className="text-xl" />
-            SIGN IN
-          </Button>
-          <Button
-            variant={"ghost"}
-            className={`
+                variant={"ghost"}
+                size={"icon"}
+              >
+                <IoIosNotificationsOutline className="text-xl" />
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="outline-none">
+                  <div className="items-c gap-2 px-3">
+                    <span
+                      className={`
+      ${home ? "text-background" : "text-black"}`}
+                    >
+                      {fUser?.displayName?.split(" ")[0]}
+                    </span>
+                    <Avatar className="h-[35px] w-[35px]">
+                      <AvatarImage
+                        sizes="20px"
+                        src="https://github.com/shadcn.png"
+                        alt="@shadcn"
+                      />
+                    </Avatar>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>Billing</DropdownMenuItem>
+                  <DropdownMenuItem>Team</DropdownMenuItem>
+                  <DropdownMenuItem>Subscription</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ) : (
+            <div className="items-c gap-2">
+              <Button
+                onClick={handleGoogleLogin}
+                className={`
       ${home ? "text-background" : "text-black"}
       `}
-          >
-            SIGN UP
-          </Button>
+                variant={"ghost"}
+              >
+                <CiUser className="text-xl" />
+                SIGN IN
+              </Button>
+              <Button
+                variant={"ghost"}
+                onClick={handleSignIn}
+                className={`
+      ${home ? "text-background" : "text-black"}
+      `}
+              >
+                SIGN UP
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       <hr />
