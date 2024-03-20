@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { storage } from "@/utils/firebase";
@@ -88,3 +89,14 @@ export const deleteFile = async (url?: string) => {
     return true;
   }
 };
+export function vArr<T>(value: T[] | T | undefined): value is T[] {
+  if (typeof value === "undefined") {
+    return false;
+  }
+
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+
+  return false;
+}

@@ -20,13 +20,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ITurfFetched } from "@/types";
+import { IOrderBase, ITurfFetched } from "@/types";
+import { useUser } from "@/utils/authContextUser";
+import toast from "react-hot-toast";
+import { useCreateOrder } from "@/utils/hooks/useOrder";
+import { useCustomToast } from "../helpers/functions";
+import { db } from "@/utils/firebase";
+import { addDoc, collection } from "firebase/firestore";
 
 export const Turf_Book = ({ turf }: { turf: ITurfFetched }) => {
   const [startDate, setStartDate] = React.useState<Date>();
   const [endDate, setEndDate] = React.useState<Date>();
-
+  const { fUser, user } = useUser();
   const [total, setTotal] = React.useState<number>(0);
+  const { mutateAsync: createOrder } = useCreateOrder();
+  const { customToast, loading } = useCustomToast();
   useEffect(() => {
     if (startDate && endDate) {
       const days =
@@ -36,6 +44,43 @@ export const Turf_Book = ({ turf }: { turf: ITurfFetched }) => {
       setTotal(total);
     }
   }, [startDate, endDate]);
+  const bookTurf = async () => {
+    if (!fUser) {
+      toast.error("You need to login to book a turf");
+      return;
+    }
+    if (!startDate || !endDate) {
+      toast.error("Please select the dates");
+      return;
+    }
+    const order: IOrderBase = {
+      turf: turf._id,
+      user: user._id,
+      owner: turf.owner,
+      startDate,
+      endDate,
+      dailyRate: turf.dailyRate,
+      totalPrice: total,
+      status: "pending",
+      payment: "pending",
+    };
+    const notificationData = {
+      subject: "New Order",
+      message: `You have a new order from ${user.displayName}`,
+      type: "order",
+      link: `/orders`,
+      from: user._id,
+      to: turf.owner,
+      read: false,
+      createdAt: new Date().toISOString(),
+    };
+    customToast({
+      func: async () => {
+        await addDoc(collection(db, "notifications"), notificationData);
+        await createOrder(order);
+      },
+    });
+  };
 
   return (
     <Card className="w-[350px]">
@@ -116,7 +161,18 @@ export const Turf_Book = ({ turf }: { turf: ITurfFetched }) => {
         </form>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <Button>Book</Button>
+        <Button
+          onClick={() => {
+            if (!fUser) {
+              toast.error("You need to login to book a turf");
+            } else {
+              bookTurf();
+            }
+          }}
+          disabled={loading}
+        >
+          Book
+        </Button>
       </CardFooter>
     </Card>
   );

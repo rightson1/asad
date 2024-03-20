@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { useUser } from "@/utils/";
 import { useState } from "react";
 import {
   Dialog,
@@ -13,12 +12,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
+import { useUser } from "@/utils/authContextUser";
 
 export default function AuthModal() {
   const { modalOpen, setModalOpen, handleGoogleLogin, handleSignIn } =
     useUser();
   const [type, setType] = useState<"login" | "signup">("login");
-
+  console.log(modalOpen);
   return (
     <>
       <div className="items-center justify-center ">

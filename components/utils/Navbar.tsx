@@ -17,6 +17,7 @@ import {
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { List_Turf } from "../turf/create";
+import { Notifications } from "./notification";
 const Navbar = ({ home = false }: { home?: boolean }) => {
   const { handleGoogleLogin, handleSignIn, fUser } = useUser();
   type TLink = {
@@ -67,15 +68,8 @@ const Navbar = ({ home = false }: { home?: boolean }) => {
                   </Button>
                 }
               />
-              <Button
-                className={` shadow-md
-      ${home ? "text-background" : "text-black"}
-      `}
-                variant={"ghost"}
-                size={"icon"}
-              >
-                <IoIosNotificationsOutline className="text-xl" />
-              </Button>
+
+              <Notifications home={home} />
               <DropdownMenu>
                 <DropdownMenuTrigger className="outline-none">
                   <div className="items-c gap-2 px-3">
@@ -103,9 +97,6 @@ const Navbar = ({ home = false }: { home?: boolean }) => {
                   <DropdownMenuItem asChild>
                     <Link href="/products">Your Turfs</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>Billing</DropdownMenuItem>
-                  <DropdownMenuItem>Team</DropdownMenuItem>
-                  <DropdownMenuItem>Subscription</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
