@@ -1,14 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MdDeleteOutline, MdEdit, MdOutlineMoreHoriz } from "react-icons/md";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import {
-  deleteFile,
-  uploadFile,
-  useCustomToast,
-} from "@/components/helpers/functions";
+import { Label } from "@/components/ui/label";
+import { MdOutlineMoreHoriz } from "react-icons/md";
+import { InputChangeEventTypes, ITurfFetched } from "@/types";
+import toast from "react-hot-toast";
+import { useUpdateTurf } from "@/utils/hooks/useTurf";
+import { useCustomToast } from "../helpers/functions";
 import { CustomModal } from "../helpers/CustomModal";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -21,88 +20,43 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { kenyanCounties } from "@/utils/data";
-import { ImageInput, ImageInputWithView } from "../utils/image_inputs";
-import { InputChangeEventTypes } from "@/types";
-import { useCreateTurf } from "@/utils/hooks/useTurf";
-import { useUser } from "@/utils/authContextUser";
-export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
-  const { loading, customToast, modalOpen, setModalOpen } = useCustomToast();
-  const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const { user } = useUser();
-  const { mutateAsync: addTurf } = useCreateTurf();
-  const [images, setImages] = useState<File[]>([]);
-  const [values, setValues] = useState({
-    title: "",
-    size: "",
-    county: "",
-    location: "",
-    description: "",
-    status: "",
-    dailyRate: "",
+export const EditGeneralInfo = ({ product }: { product: ITurfFetched }) => {
+  const [values, setValues] = useState<Partial<ITurfFetched>>({
+    title: product.title,
+    dailyRate: product.dailyRate,
+    status: product.status,
+    description: product.description,
+    county: product.county,
+    location: product.location,
   });
-  const edit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleChange = (e: ChangeEvent<InputChangeEventTypes>) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+  const { mutateAsync } = useUpdateTurf();
+  const { customToast, loading } = useCustomToast();
+  const updateGeneralInfo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let thumbnailUrl = "";
-    let imagesUrl: string[] = [];
-
     customToast({
       func: async () => {
-        if (thumbnail) {
-          thumbnailUrl = await uploadFile(
-            thumbnail,
-            `turf/thumbnail/${values.title + Date.now()}`
-          );
-        }
-        if (images.length > 0) {
-          imagesUrl = await Promise.all(
-            images.map(async (image) => {
-              return await uploadFile(
-                image,
-                `turf/images/${values.title + Date.now()}`
-              );
-            })
-          );
-        }
-        const data = {
+        await mutateAsync({
+          _id: product._id,
           ...values,
-          dailyRate: parseInt(values.dailyRate),
-          thumbnail: thumbnailUrl,
-          images: imagesUrl,
-          owner: user._id,
-          status: values.status as "published" | "unpublished",
-        };
-        await addTurf(data);
-      },
-      suc: "Turf added successfully",
-      err: "Failed to add turf",
-      efunc: async () => {
-        if (thumbnailUrl) {
-          await deleteFile(thumbnailUrl);
-        }
-        if (imagesUrl.length > 0) {
-          await Promise.all(
-            imagesUrl.map(async (url) => {
-              await deleteFile(url);
-            })
-          );
-        }
+        });
       },
     });
   };
-  const handleChange = (e: React.ChangeEvent<InputChangeEventTypes>) => {
-    const { name, value } = e.target;
-    setValues((prev) => ({ ...prev, [name]: value }));
-  };
   return (
     <CustomModal
-      title="List a Turf"
-      onSubmit={edit}
+      title="Edit General Information"
       disableSubmit={loading}
-      modalOpen={modalOpen}
-      setModalOpen={setModalOpen}
-      trigger={trigger}
+      onSubmit={updateGeneralInfo}
+      trigger={
+        <Button size="icon" variant={"ghost"}>
+          <MdOutlineMoreHoriz className="text-xl" />
+        </Button>
+      }
     >
-      <div className="grid md:grid-cols-1 w-full  gap-4 py-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full  gap-4 ">
         <div className="flex flex-col space-y-1.5 ">
           <Label htmlFor="title">Name *</Label>
           <Input
@@ -110,6 +64,7 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
             placeholder="Name of turf"
             required
             onChange={handleChange}
+            value={values.title}
           />
         </div>
         <div className="flex flex-col space-y-1.5 ">
@@ -119,6 +74,7 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
             placeholder="Width * Height"
             required
             onChange={handleChange}
+            value={values.size}
           />
         </div>
 
@@ -130,6 +86,7 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
             type="number"
             required
             onChange={handleChange}
+            value={values.dailyRate}
           />
         </div>
 
@@ -139,8 +96,12 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
           <Select
             required
             onValueChange={(value) => {
-              setValues((prev) => ({ ...prev, status: value }));
+              setValues((prev) => ({
+                ...prev,
+                status: value as ITurfFetched["status"],
+              }));
             }}
+            defaultValue={values.status}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select Status" />
@@ -158,6 +119,7 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
           <Select
             name="county"
             required
+            defaultValue={values.county}
             onValueChange={(value) => {
               setValues((prev) => ({ ...prev, county: value }));
             }}
@@ -186,6 +148,7 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
             placeholder="Detailed infomation about location"
             required
             onChange={handleChange}
+            value={values.location}
           />
         </div>
 
@@ -196,19 +159,7 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
             name="description"
             placeholder="Type your description here."
             onChange={handleChange}
-          />
-        </div>
-
-        <div className="col-span-2">
-          <Label htmlFor="thumbnail">Thumbnail</Label>
-          <ImageInputWithView file={thumbnail} setFile={setThumbnail} />
-        </div>
-        <div className="col-span-2">
-          <Label htmlFor="thumbnail">Images</Label>
-          <ImageInputWithView
-            files={images}
-            setFiles={setImages}
-            multiple={true}
+            value={values.description}
           />
         </div>
       </div>

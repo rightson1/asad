@@ -27,19 +27,34 @@ import {
 } from "@/components/ui/popover";
 import { FaLocationDot } from "react-icons/fa6";
 import { Button } from "../ui/button";
+import { IUserFetched } from "@/types";
+import Link from "next/link";
 export const Best_Sellers = () => {
   const { data: sellers, isLoading } = useGetAllSellers();
 
   return (
     <section className="w-full bg-white pxs py-20">
       <h3 className="h3 py-5">Best Lenders</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-          sellers &&
-          sellers.map((lender) => (
-            <Card className="py-4 bg-transparent" key={lender.displayName}>
+      <Seller_Cards isLoading={isLoading} lenders={sellers} />
+    </section>
+  );
+};
+export const Seller_Cards = ({
+  lenders,
+  isLoading,
+}: {
+  lenders?: IUserFetched[];
+  isLoading: boolean;
+}) => {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        lenders &&
+        lenders.map((lender) => (
+          <Card className="py-4 bg-transparent" key={lender.displayName}>
+            <Link href={`/lenders/${lender._id}`}>
               <CardContent className=" py-2">
                 <Image
                   alt="Card background"
@@ -56,11 +71,11 @@ export const Best_Sellers = () => {
                   {lender.county || "Nairobi"}
                 </p>
               </CardFooter>
-            </Card>
-          ))
-        )}
-      </div>
-    </section>
+            </Link>
+          </Card>
+        ))
+      )}
+    </div>
   );
 };
 
@@ -77,7 +92,7 @@ export const County_Selector = ({
         <div className="items-c gap-2">
           <div className="items-c">
             <FaLocationDot size={16} />
-            <h6 className="h6">Location</h6>
+            <h6 className="h6">{county || "Location"}</h6>
           </div>
           <CiSearch size={20} />
         </div>

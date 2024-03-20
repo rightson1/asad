@@ -29,7 +29,7 @@ export interface IUserFetched extends IUser, IFetched {}
 export interface ITurfBase {
   title: string;
   size: string;
-  hourlyRate: number;
+  status: "published" | "unpublished";
   dailyRate: number;
   county: string;
   location: string;
@@ -38,3 +38,5 @@ export interface ITurfBase {
   images: string[];
   owner: string;
 }
+//ITurfFetched
+export interface ITurfFetched extends ITurfBase, IFetched {}

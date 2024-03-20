@@ -20,8 +20,17 @@ export async function POST(request: Request) {
 }
 export async function PUT(request: NextRequest) {
   await conn();
+  const body = await request.json();
+  const _id = body._id;
+  const updatedTurf = await Turf.findByIdAndUpdate(_id, body, {
+    new: true,
+  });
+  return NextResponse.json(updatedTurf);
 }
 //get user by uid
 export async function GET(request: NextRequest) {
   await conn();
+  const _id = request.nextUrl.searchParams.get("_id");
+  const turf = await Turf.findById(_id);
+  return NextResponse.json(turf);
 }

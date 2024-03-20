@@ -51,6 +51,9 @@
 .items-c {
   @apply flex items-center;
 }
+.fc {
+  @apply flex items-center justify-center;
+}
 .fb {
   @apply flex items-center justify-between;
 }

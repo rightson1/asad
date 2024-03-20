@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
 import { useGetAllSellers } from "@/utils/hooks/useUser";
 import { IUserFetched } from "@/types";
-import { County_Selector } from "@/components/home/sellers";
+import { County_Selector, Seller_Cards } from "@/components/home/sellers";
 const Page = () => {
   const { data, isLoading } = useGetAllSellers();
   const [sellers, setSellers] = React.useState<IUserFetched[]>([]);
@@ -66,33 +66,7 @@ const Page = () => {
         </div>
       </div>
       <div className="py-10">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : (
-            sellers &&
-            sellers.map((lender) => (
-              <Card className="py-4 bg-transparent" key={lender.displayName}>
-                <CardContent className=" py-2">
-                  <Image
-                    alt="Card background"
-                    className="object-cover rounded-xl h-[150px]"
-                    src={lender.thumbnail || "/images/placeholder.png"}
-                    width={270}
-                    height={270}
-                  />
-                </CardContent>
-                <CardFooter className="pb-0 pt-2 px-4 flex-col items-start">
-                  <h4 className="font-bold text-large">{lender.displayName}</h4>
-                  <p>
-                    <span className="font-bold">Location:</span>{" "}
-                    {lender.county || "Nairobi"}
-                  </p>
-                </CardFooter>
-              </Card>
-            ))
-          )}
-        </div>
+        <Seller_Cards isLoading={isLoading} lenders={sellers} />
       </div>
     </div>
   );
