@@ -22,3 +22,10 @@ export const useGetAllSellers = () => {
     queryFn: () => axios.get("/api/users/all").then(eCheck),
   });
 };
+//user by _id
+export const useGetUser = (_id: string) => {
+  return useQuery<IUserFetched>({
+    queryKey: ["user", _id],
+    queryFn: () => axios.get(`/api/users?_id=${_id}`).then(eCheck),
+  });
+};

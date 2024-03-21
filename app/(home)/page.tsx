@@ -1,8 +1,11 @@
+"use client";
 import { Best_Sellers } from "@/components/home/sellers";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/utils/authContextUser";
 import Image from "next/image";
 
 export default function Home() {
+  const { handleSignIn } = useUser();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between ">
       <div
@@ -30,12 +33,18 @@ export default function Home() {
           </div>
           <h1 className="text-[70px] font-bold ">NO TURF?</h1>
           <p className="max-w-md">
-            Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa
-            mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien
-            fringilla, mattis ligula consectetur, ultrices mauris. Maecenas
-            vitae mattis tellus.
+            {/* turf lending, if you have turf you can list it and users can easily rent */}
+            Dont worry, we got you covered. We provide the best turf lending
+            services in the country. We have a wide range of turfs available for
+            rent. Our turfs are well maintained and are perfect for any
+            occasion. Whether you need a turf for a wedding, a party, or any
+            other event, we have the perfect turf for you. Contact us today to
+            find out more
           </p>
-          <Button className="w-[200px] h-[50px] bg-[darkOrange] hover:bg-white text-black mt-5">
+          <Button
+            onClick={handleSignIn}
+            className="w-[200px] h-[50px] bg-[darkOrange] hover:bg-white text-black mt-5"
+          >
             <p>Get Started</p>
           </Button>
         </div>
@@ -56,14 +65,16 @@ export default function Home() {
             Get the best out of it
           </h4>
           <p className="text-sm">
-            Lorem ipsum dolor sit amet consectetur adipiscing elit Ut et massa
-            mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien
-            fringilla, mattis ligula consectetur, ultrices mauris. Maecenas
-            vitae mattis tellus..Lorem ipsum dolor sit amet consectetur
-            adipiscing elit Ut et massa mi. Aliquam in hendrerit urna.
-            Pellentesque sit amet sapien fringilla
+            Do you have a turf that you are not using? Why not make some extra
+            cash by renting it out? We provide a platform where you can list
+            your turf and connect with people who are looking to rent a turf.
+            Our platform is easy to use and secure, so you can rest assured that
+            your turf is in good hands. Contact us today to find out more about
+            how you can start renting out your turf and making some extra cash.
           </p>
-          <Button className="bg-white text-black">Start Now</Button>
+          <Button onClick={handleSignIn} className="bg-white text-black">
+            Start Now
+          </Button>
         </div>
       </div>
       <Best_Sellers />

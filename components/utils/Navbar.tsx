@@ -97,6 +97,9 @@ const Navbar = ({ home = false }: { home?: boolean }) => {
                   <DropdownMenuItem asChild>
                     <Link href="/products">Your Turfs</Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/orders">Your Orders</Link>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

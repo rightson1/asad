@@ -44,7 +44,9 @@ export async function PUT(request: NextRequest) {
 export async function GET(request: NextRequest) {
   await conn();
   const uid = request.nextUrl.searchParams.get("uid");
-  const user = await User.findOne({ uid });
+  const _id = request.nextUrl.searchParams.get("_id");
+  const query = uid ? { uid } : { _id };
+  const user = await User.findOne(query);
   if (!user) {
     return NextResponse.json({
       status: 404,

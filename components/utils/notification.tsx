@@ -79,7 +79,7 @@ export const Notifications = ({ home }: { home: boolean }) => {
   }, [open, notifications]);
   return (
     <DropdownMenu open={open} onOpenChange={(open) => setOpen(open)}>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button
           className={` shadow-md hover:bg-background
       ${home ? "text-background" : "text-black"}

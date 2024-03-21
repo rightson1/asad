@@ -1,6 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { conn } from "@/models/mongo_db_connection";
 import Order from "@/models/Order";
+import User from "@/models/User";
+import Turf from "@/models/Turf";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
@@ -32,6 +34,17 @@ export async function PUT(request: NextRequest) {
 export async function GET(request: NextRequest) {
   await conn();
   const _id = request.nextUrl.searchParams.get("_id");
-  const order = await Order.findById(_id);
-  return NextResponse.json(order);
+  const _owner = request.nextUrl.searchParams.get("_owner");
+  if (_id) {
+    const order = await Order.findById(_id);
+    return NextResponse.json(order);
+  } else {
+    User;
+    Turf;
+
+    const order = await Order.find({
+      owner: _owner,
+    }).populate(["user", "turf"]);
+    return NextResponse.json(order);
+  }
 }

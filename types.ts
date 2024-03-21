@@ -41,8 +41,8 @@ export interface ITurfBase {
 //ITurfFetched
 export interface ITurfFetched extends ITurfBase, IFetched {}
 export interface IOrderBase {
-  turf: string;
-  user: string;
+  turf: string | ITurfFetched;
+  user: string | IUserFetched;
   startDate: Date;
   endDate: Date;
   dailyRate: number;
@@ -51,6 +51,11 @@ export interface IOrderBase {
   status: "pending" | "completed" | "cancelled";
   payment: "pending" | "completed" | "cancelled";
 }
+export interface IOrderFetched extends IFetched, IOrderBase {
+  user: IUserFetched;
+  turf: ITurfFetched;
+}
+
 export interface INotification {
   subject: string;
   link: string;
