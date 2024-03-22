@@ -39,7 +39,8 @@ import {
 } from "@/components/ui/table";
 import { IOrderFetched, ITurfFetched, IUserFetched } from "@/types";
 import Link from "next/link";
-export const columns: ColumnDef<IOrderFetched>[] = [
+import { View_Order } from "@/components/order/view";
+const columns: ColumnDef<IOrderFetched>[] = [
   {
     accessorKey: "user",
     header: "User",
@@ -66,7 +67,7 @@ export const columns: ColumnDef<IOrderFetched>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          DailyRate
+          Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -94,25 +95,12 @@ export const columns: ColumnDef<IOrderFetched>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const product = row.original;
+      const order = row.original;
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem>Approve</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex gap-3">
+          <View_Order order={order} />
+        </div>
       );
     },
   },
@@ -154,7 +142,7 @@ const Orders = () => {
   });
 
   return (
-    <div className="w-full pxs">
+    <div className="w-full pxs min-h-[90vh]">
       <h3 className="h3">Your Turfs</h3>
       <div className="flex items-center py-4">
         <Input

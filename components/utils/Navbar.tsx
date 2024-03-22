@@ -20,6 +20,7 @@ import { List_Turf } from "../turf/create";
 import { Notifications } from "./notification";
 const Navbar = ({ home = false }: { home?: boolean }) => {
   const { handleGoogleLogin, handleSignIn, fUser } = useUser();
+
   type TLink = {
     link: string;
     name: string;
@@ -113,7 +114,7 @@ const Navbar = ({ home = false }: { home?: boolean }) => {
                 variant={"ghost"}
               >
                 <CiUser className="text-xl" />
-                SIGN IN
+                LOGIN
               </Button>
               <Button
                 variant={"ghost"}

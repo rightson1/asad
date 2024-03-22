@@ -81,3 +81,9 @@ p {
 .pxs {
   @apply px-4 md:px-24;
 }
+.main-h {
+  @apply h-[calc(100vh-4rem)];
+}
+.min-m-h {
+  @apply min-h-[calc(100vh-4rem)];
+}

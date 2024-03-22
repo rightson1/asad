@@ -40,7 +40,7 @@ import { useUser } from "@/utils/authContextUser";
 import { useGetAllTurfsByOwner } from "@/utils/hooks/useTurf";
 import Link from "next/link";
 
-export const columns: ColumnDef<ITurfFetched>[] = [
+const columns: ColumnDef<ITurfFetched>[] = [
   {
     accessorKey: "title",
     header: "Title",

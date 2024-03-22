@@ -111,26 +111,35 @@ export const Notifications = ({ home }: { home: boolean }) => {
 
       <DropdownMenuContent className="w-[300px] p-4">
         <div className="fx-c mt-5">
-          {notifications.map((notification, i) => (
-            <Link
-              href={`/orders`}
-              className=" flex gap-4  w-full py-4 bc border-b"
-              key={i}
-            >
-              <div className="fx-c gap-2 ">
-                <div className="fb w-full ">
-                  <h6 className="h6">
-                    {notification.type === "order" ? "Order" : "Message"}
-                  </h6>
-                  <h6 className="h6">
-                    {format(notification.createdAt)}
-                    <div className="w-2 h-2 rounded-full bg-blue-500 inline-block ml-2"></div>
-                  </h6>
+          {notifications
+            //sort by date
+            .sort((a, b) => {
+              return (
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+              );
+            })
+            .slice(0, 5)
+            .map((notification, i) => (
+              <Link
+                href={`/orders`}
+                className=" flex gap-4  w-full py-4 bc border-b"
+                key={i}
+              >
+                <div className="fx-c gap-2 ">
+                  <div className="fb w-full ">
+                    <h6 className="h6">
+                      {notification.type === "order" ? "Order" : "Message"}
+                    </h6>
+                    <h6 className="h6">
+                      {format(notification.createdAt)}
+                      <div className="w-2 h-2 rounded-full bg-blue-500 inline-block ml-2"></div>
+                    </h6>
+                  </div>
+                  <p className="text-sm font-[300]">{notification.message}</p>
                 </div>
-                <p className="text-sm font-[300]">{notification.message}</p>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

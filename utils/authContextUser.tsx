@@ -53,6 +53,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const localUser: IUser | null = userString ? JSON.parse(userString) : null;
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
+        console.log({ user });
         if (localUser?.uid === user.uid) {
           setFUser({
             uid: user.uid,
@@ -127,16 +128,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
-    customToast({
-      func: async () => {
-        await auth.signOut();
-        setFUser(null);
-        setUser(null);
-        localStorage.removeItem("user");
-        router.push("/");
-      },
-      suc: "Logged out successfully",
-    });
+    await auth.signOut();
+    setFUser(null);
+    setUser(null);
+    localStorage.removeItem("user");
+    window.location.href = "/";
   };
   return (
     <AuthContext.Provider

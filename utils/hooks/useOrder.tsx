@@ -24,7 +24,21 @@ export const useGetOrder = (_owner: string) => {
   };
   return useQuery<IOrderFetched[]>({
     queryFn: getOrder,
-    queryKey: ["getOrder"],
+    queryKey: ["orders"],
     enabled: !!_owner,
+  });
+};
+//edit order
+export const useEditOrder = () => {
+  const queryClient = useQueryClient();
+  const editOrder = async (order: { _id: string; status: string }) => {
+    await axios.put("/api/orders", order).then(eCheck);
+    queryClient.invalidateQueries({
+      queryKey: ["orders"],
+    });
+  };
+  return useMutation({
+    mutationFn: editOrder,
+    mutationKey: ["editOrder"],
   });
 };
