@@ -39,6 +39,7 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
     description: "",
     status: "",
     dailyRate: "",
+    hourlyRate: "",
   });
   const edit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,6 +67,7 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
         const data = {
           ...values,
           dailyRate: parseInt(values.dailyRate),
+          hourlyRate: parseInt(values.hourlyRate),
           thumbnail: thumbnailUrl,
           images: imagesUrl,
           owner: user._id,
@@ -132,6 +134,16 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
             onChange={handleChange}
           />
         </div>
+        <div className="flex flex-col space-y-1.5 ">
+          <Label htmlFor="dailyRate">Price Per Hour *</Label>
+          <Input
+            name="hourlyRate"
+            placeholder="Kshs per day"
+            type="number"
+            required
+            onChange={handleChange}
+          />
+        </div>
 
         {/* status ,either published or unpublished */}
         <div className="flex flex-col space-y-1.5">
@@ -153,7 +165,7 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex flex-col space-y-1.5 col-span-2">
+        <div className="flex flex-col space-y-1.5 ">
           <Label htmlFor="county">County</Label>
           <Select
             name="county"

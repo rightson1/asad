@@ -13,14 +13,21 @@ const Order = new Schema(
     },
     startDate: {
       type: Date,
-      required: true,
     },
     endDate: {
       type: Date,
-      required: true,
     },
-    dailyRate: {
-      type: Number,
+    date: {
+      type: Date,
+    },
+    startTime: {
+      type: String,
+    },
+    endTime: {
+      type: String,
+    },
+    rate: {
+      type: String,
       required: true,
     },
     totalPrice: {

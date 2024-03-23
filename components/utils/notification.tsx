@@ -7,6 +7,7 @@ import { IoIosClose } from "react-icons/io";
 import { useEffect, useState } from "react";
 import {
   collection,
+  deleteDoc,
   doc,
   onSnapshot,
   query,
@@ -55,26 +56,25 @@ export const Notifications = ({ home }: { home: boolean }) => {
 
   useEffect(() => {
     if (open) {
-      const update = async () => {
+      const handleNotifications = async () => {
         if (notifications.length > 0) {
-          const unseenNotifications = notifications.filter(
+          const readNotifications = notifications.filter(
+            (notification) => notification.read
+          );
+          const unreadNotifications = notifications.filter(
             (notification) => !notification.read
           );
-          if (unseenNotifications.length > 0) {
-            const unseenNotificationIds = unseenNotifications.map(
-              (notification) => notification.id
-            );
-            await Promise.all(
-              unseenNotificationIds.map(async (id) => {
-                await updateDoc(doc(db, "notifications", id), {
-                  read: true,
-                });
-              })
-            );
-          }
+          await Promise.all(
+            unreadNotifications.map(async (notification) => {
+              await updateDoc(doc(db, "notifications", notification.id), {
+                read: true,
+              });
+            })
+          );
         }
       };
-      update();
+
+      handleNotifications();
     }
   }, [open, notifications]);
   return (
@@ -141,6 +141,22 @@ export const Notifications = ({ home }: { home: boolean }) => {
               </Link>
             ))}
         </div>
+        {notifications.length > 0 && (
+          <div className="flex justify-end">
+            <Button
+              size={"sm"}
+              className="my-1 "
+              onClick={() => {
+                // clear all notifications
+                notifications.forEach(async (notification) => {
+                  await deleteDoc(doc(db, "notifications", notification.id));
+                });
+              }}
+            >
+              Clear
+            </Button>
+          </div>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

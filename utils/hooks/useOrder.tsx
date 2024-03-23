@@ -4,28 +4,42 @@ import { IOrderBase, IOrderFetched } from "@/types";
 import { eCheck } from "@/components/helpers/functions";
 
 export const useCreateOrder = () => {
+  const queryClient = useQueryClient();
   const createOrder = async (order: IOrderBase) => {
     await axios.post("/api/orders", order).then(eCheck);
   };
   return useMutation({
     mutationFn: createOrder,
     mutationKey: ["createOrder"],
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["orders"],
+      });
+    },
   });
 };
 
 //get order by _owner
-export const useGetOrder = (_owner: string) => {
+export const useGetOrders = ({
+  _owner,
+  _user,
+}: {
+  _owner?: string;
+  _user?: string;
+}) => {
+  const query = _owner ? { _owner } : { _user };
+  console.log(query);
   const getOrder = async () => {
     return await axios
       .get("/api/orders", {
-        params: { _owner },
+        params: { ...query },
       })
       .then(eCheck);
   };
   return useQuery<IOrderFetched[]>({
     queryFn: getOrder,
-    queryKey: ["orders"],
-    enabled: !!_owner,
+    queryKey: ["orders", query],
+    enabled: !!_owner || !!_user,
   });
 };
 //edit order

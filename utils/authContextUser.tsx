@@ -53,7 +53,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const localUser: IUser | null = userString ? JSON.parse(userString) : null;
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log({ user });
         if (localUser?.uid === user.uid) {
           setFUser({
             uid: user.uid,

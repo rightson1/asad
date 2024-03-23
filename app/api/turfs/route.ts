@@ -34,3 +34,10 @@ export async function GET(request: NextRequest) {
   const turf = await Turf.findById(_id);
   return NextResponse.json(turf);
 }
+//delete
+export async function DELETE(request: NextRequest) {
+  await conn();
+  const _id = request.nextUrl.searchParams.get("_id");
+  await Turf.findByIdAndDelete(_id);
+  return NextResponse.json({ success: true });
+}

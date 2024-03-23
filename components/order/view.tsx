@@ -49,8 +49,21 @@ export function View_Order({ order }: { order: IOrderFetched }) {
           <Field name="User" value={order.user.displayName} />
 
           <Field name="Turf" value={order.turf.title} />
-          <Field name="Start Date" value={_date(order.startDate)} />
-          <Field name="End Date" value={_date(order.endDate)} />
+          {order.startDate && order.endDate && (
+            <>
+              {" "}
+              <Field name="Start Date" value={_date(order.startDate)} />
+              <Field name="End Date" value={_date(order.endDate)} />
+            </>
+          )}
+          {order.date && <Field name="Date" value={_date(order.date)} />}
+          {/* start time end time */}
+          {order.startTime && order.endTime && (
+            <>
+              <Field name="Start Time" value={order.startTime} />
+              <Field name="End Time" value={order.endTime} />
+            </>
+          )}
           <Field name="Total Price" value={`KSH ${order.totalPrice}`} />
           <div className="fb w-full ">
             <span className="font-semibold">Status:</span>

@@ -6,12 +6,19 @@ import { eCheck } from "@/components/helpers/functions";
 
 // Create a turf
 export const useCreateTurf = () => {
+  const queryClient = useQueryClient();
   const createTurf = async (turf: ITurfBase) => {
     await axios.post("/api/turfs", turf).then(eCheck);
   };
   return useMutation({
     mutationFn: createTurf,
     mutationKey: ["createTurf"],
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["turfs"],
+      });
+      toast.success("Turf created successfully");
+    },
   });
 };
 export const useGetAllTurfs = () => {
@@ -52,6 +59,21 @@ export const useUpdateTurf = () => {
       console.log(turf);
       queryClient.invalidateQueries({
         // queryKey: ["turf", turf._id],
+      });
+    },
+  });
+};
+//use delete turf
+export const useDeleteTurf = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (_id: string) => {
+      return await axios.delete(`/api/turfs?_id=${_id}`).then(eCheck);
+    },
+    mutationKey: ["deleteTurf"],
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["turfs"],
       });
     },
   });

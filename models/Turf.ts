@@ -18,7 +18,10 @@ const Turf = new Schema(
       type: String,
       required: true,
     },
-
+    hourlyRate: {
+      type: Number,
+      required: true,
+    },
     dailyRate: {
       type: Number,
       required: true,

@@ -1,6 +1,6 @@
 "use client";
 import { useUser } from "@/utils/authContextUser";
-import { useGetOrder } from "@/utils/hooks/useOrder";
+import { useGetOrders } from "@/utils/hooks/useOrder";
 import React from "react";
 import {
   ColumnDef,
@@ -108,7 +108,9 @@ const columns: ColumnDef<IOrderFetched>[] = [
 
 const Orders = () => {
   const { user } = useUser();
-  const { data, isLoading } = useGetOrder(user._id);
+  const { data, isLoading } = useGetOrders({
+    _owner: user._id,
+  });
   const [orders, setOrders] = React.useState<IOrderFetched[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

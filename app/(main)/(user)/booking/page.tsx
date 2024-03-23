@@ -1,6 +1,7 @@
 "use client";
-
-import * as React from "react";
+import { useUser } from "@/utils/authContextUser";
+import { useGetOrders } from "@/utils/hooks/useOrder";
+import React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -27,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { format } from "timeago.js";
 import {
   Table,
   TableBody,
@@ -35,19 +37,82 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ITurfFetched } from "@/types";
-import { useUser } from "@/utils/authContextUser";
-import { useDeleteTurf, useGetAllTurfsByOwner } from "@/utils/hooks/useTurf";
+import { IOrderFetched, ITurfFetched, IUserFetched } from "@/types";
 import Link from "next/link";
-import { deleteFile, useCustomToast } from "@/components/helpers/functions";
+import { View_Order } from "@/components/order/view";
+const columns: ColumnDef<IOrderFetched>[] = [
+  {
+    accessorKey: "owner",
+    header: "Business",
+    cell: ({ row }) => (
+      <div className="capitalize">
+        {(row.getValue("owner") as IUserFetched).displayName}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "turf",
+    header: "Turf",
+    cell: ({ row }) => (
+      <div className="capitalize">
+        {(row.getValue("turf") as ITurfFetched).title}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="lowercase">{format(row.getValue("createdAt"))}</div>
+    ),
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("status")}</div>
+    ),
+  },
+  {
+    accessorKey: "totalPrice",
+    header: "Total Price",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("totalPrice")}</div>
+    ),
+  },
 
-export default function Products() {
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const order = row.original;
+
+      return (
+        <div className="flex gap-3">
+          <View_Order order={order} />
+        </div>
+      );
+    },
+  },
+];
+
+const Orders = () => {
   const { user } = useUser();
-  const { data } = useGetAllTurfsByOwner(user._id);
-  const [turfs, setTurfs] = React.useState<ITurfFetched[]>([]);
+  const { data, isLoading } = useGetOrders({
+    _user: user._id,
+  });
+  const [orders, setOrders] = React.useState<IOrderFetched[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const { mutateAsync: deleteTurf } = useDeleteTurf();
-  const { customToast } = useCustomToast();
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -56,91 +121,11 @@ export default function Products() {
   const [rowSelection, setRowSelection] = React.useState({});
   React.useEffect(() => {
     if (data) {
-      setTurfs(data);
+      setOrders(data);
     }
   }, [data]);
-  const handleDelete = async (turf: ITurfFetched) => {
-    customToast({
-      func: async () => {
-        if (turf.thumbnail) {
-          await deleteFile(turf.thumbnail);
-        }
-        if (turf.images) {
-          await Promise.all(
-            turf.images.map(async (image) => {
-              await deleteFile(image);
-            })
-          );
-        }
-        await deleteTurf(turf._id);
-      },
-    });
-  };
-  const columns: ColumnDef<ITurfFetched>[] = [
-    {
-      accessorKey: "title",
-      header: "Title",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("title")}</div>
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("status")}</div>
-      ),
-    },
-    {
-      accessorKey: "dailyRate",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            DailyRate
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => (
-        <div className="lowercase">{row.getValue("dailyRate")}</div>
-      ),
-    },
-
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => {
-        const product = row.original;
-
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href={`/products/${product._id}`}>Edit</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleDelete(product)}>
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
-    },
-  ];
   const table = useReactTable({
-    data: turfs,
+    data: orders,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -159,12 +144,14 @@ export default function Products() {
   });
 
   return (
-    <div className="w-full pxs">
+    <div className="w-full pxs min-h-[90vh]">
       <h3 className="h3">Your Turfs</h3>
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter Turfs..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+          value={
+            (table.getColumn("displayName")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
             table.getColumn("title")?.setFilterValue(event.target.value)
           }
@@ -234,6 +221,15 @@ export default function Products() {
                   ))}
                 </TableRow>
               ))
+            ) : isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  Loading...
+                </TableCell>
+              </TableRow>
             ) : (
               <TableRow>
                 <TableCell
@@ -273,4 +269,6 @@ export default function Products() {
       </div>
     </div>
   );
-}
+};
+
+export default Orders;

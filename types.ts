@@ -31,6 +31,7 @@ export interface ITurfBase {
   size: string;
   status: "published" | "unpublished";
   dailyRate: number;
+  hourlyRate: number;
   county: string;
   location: string;
   description: string;
@@ -43,10 +44,13 @@ export interface ITurfFetched extends ITurfBase, IFetched {}
 export interface IOrderBase {
   turf: string | ITurfFetched;
   user: string | IUserFetched;
-  startDate: Date;
-  endDate: Date;
-  dailyRate: number;
-  owner: string;
+  rate: "hourlyRate" | "dailyRate";
+  startDate?: Date;
+  endDate?: Date;
+  date?: Date;
+  startTime?: string;
+  endTime?: string;
+  owner: string | IUserFetched;
   totalPrice: number;
   status: "pending" | "completed" | "cancelled";
   payment: "pending" | "completed" | "cancelled";
@@ -54,6 +58,7 @@ export interface IOrderBase {
 export interface IOrderFetched extends IFetched, IOrderBase {
   user: IUserFetched;
   turf: ITurfFetched;
+  owner: IUserFetched;
 }
 
 export interface INotification {

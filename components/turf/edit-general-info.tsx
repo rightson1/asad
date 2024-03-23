@@ -28,6 +28,7 @@ export const EditGeneralInfo = ({ product }: { product: ITurfFetched }) => {
     description: product.description,
     county: product.county,
     location: product.location,
+    hourlyRate: product.hourlyRate,
   });
   const handleChange = (e: ChangeEvent<InputChangeEventTypes>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -87,6 +88,17 @@ export const EditGeneralInfo = ({ product }: { product: ITurfFetched }) => {
             required
             onChange={handleChange}
             value={values.dailyRate}
+          />
+        </div>
+        <div className="flex flex-col space-y-1.5 ">
+          <Label htmlFor="hourlyRate">Price Per Hour *</Label>
+          <Input
+            name="hourlyRate"
+            placeholder="Kshs per day"
+            type="number"
+            required
+            onChange={handleChange}
+            value={values.hourlyRate}
           />
         </div>
 
