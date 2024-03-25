@@ -1,6 +1,6 @@
 "use client";
 import { SetStateAction, createContext, useContext, useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "./firebase";
 import { useState } from "react";
@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { IFUser, IUser, IUserFetched } from "@/types";
 import axios from "axios";
 
-import { useCustomToast } from "@/components/helpers/functions";
+import { eCheck, useCustomToast } from "@/components/helpers/functions";
 import toast from "react-hot-toast";
 
 // Create a context for authentication
@@ -39,25 +39,53 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Function to fetch user from API
   const fetchUser = async (uid: string) =>
-    await axios.get(`/api/users?uid=${uid}`).then((res) => {
-      const user = res.data;
-      if (user) {
-        setUser(res.data);
-        localStorage.setItem("user", JSON.stringify(user));
-        setFUser({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-        });
-      } else {
-        toast.error("User does not exist");
-        localStorage.removeItem("user");
-        setUser(null);
-        setFUser(null);
-      }
-    });
-
+    await axios
+      .get(`/api/users?uid=${uid}`)
+      .then(eCheck)
+      .then((user) => {
+        if (user) {
+          setUser({
+            displayName: user.displayName,
+            email: user.email,
+            isSeller: user.isSeller,
+            status: user.status,
+            uid: user.uid,
+            county: user.county,
+            thumbnail: user.thumbnail,
+          });
+          setFUser({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          });
+          localStorage.setItem("user", JSON.stringify(user));
+        } else {
+          toast.error("User does not exist");
+          localStorage.removeItem("user");
+          setUser(null);
+          setFUser(null);
+        }
+      });
+  const login = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    await signInWithEmailAndPassword(auth, email, password)
+      .then(async (userCredential) => {
+        await axios
+          .get(`/api/users?uid=${userCredential.user.uid}`)
+          .then(eCheck);
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        throw new Error(errorMessage);
+      });
+  };
   // Effect to handle authentication state changes
   useEffect(() => {
     const userString =
@@ -74,11 +102,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           });
           setUser(localUser);
         } else {
-          fetchUser(user.uid).catch((err) => {
-            if (err.response.status === 404) {
-              console.log("User does not exist");
-            }
-          });
+          fetchUser(user.uid).catch((err) => {});
         }
       } else {
         setFUser(null);
@@ -89,56 +113,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       unsub();
     };
   }, []);
-
-  // Function to handle sign in
-  const handleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    const signIn = async () =>
-      await signInWithPopup(auth, provider).then(async (result) => {
-        const { displayName, email, uid } = result.user;
-        if (displayName && email && uid) {
-          {
-            const data: IUser = {
-              uid: uid,
-              email: email,
-              isSeller: false,
-              displayName,
-              status: "active",
-            };
-            await axios.post("/api/users", data);
-          }
-        } else {
-          throw new Error("Could not sign in");
-        }
-      });
-    customToast({
-      func: signIn,
-      suc: "Signed in successfully",
-      err: "Could not sign in",
-      sfunc: () => (window.location.href = "/profile"),
-    });
-    setModalOpen(false);
-  };
-
-  // Function to handle Google login
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    const signIn = async () =>
-      await signInWithPopup(auth, provider).then(async (result) => {
-        const { uid } = result.user;
-        if (uid) {
-          {
-            await fetchUser(uid);
-          }
-        }
-      });
-    customToast({
-      func: signIn,
-      suc: "Signed in successfully",
-      err: "Could not sign in",
-    });
-    setModalOpen(false);
-  };
 
   // Function to handle logout
   const logout = async () => {
@@ -154,14 +128,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider
       value={{
         user,
-        handleSignIn,
         fetchUser,
         logout,
-        handleGoogleLogin,
         fUser,
         setModalOpen,
         modalOpen,
         loggedIn,
+        login,
       }}
     >
       {children}
@@ -173,10 +146,15 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 interface AuthContextProps {
   user: IUserFetched;
   fUser: IFUser | null;
-  handleSignIn: () => void;
+  login: ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => Promise<void>;
   fetchUser: (uid: string) => void;
   logout: () => Promise<void>;
-  handleGoogleLogin: () => void;
   setModalOpen: React.Dispatch<SetStateAction<boolean>>;
   modalOpen: boolean;
   loggedIn: boolean;

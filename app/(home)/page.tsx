@@ -3,9 +3,10 @@ import { Best_Sellers } from "@/components/home/sellers";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/utils/authContextUser";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
-  const { handleSignIn } = useUser();
+  const { user } = useUser();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between ">
       <div
@@ -41,11 +42,8 @@ export default function Home() {
             other event, we have the perfect turf for you. Contact us today to
             find out more
           </p>
-          <Button
-            onClick={handleSignIn}
-            className="w-[200px] h-[50px] bg-[darkOrange] hover:bg-white text-black mt-5"
-          >
-            <p>Get Started</p>
+          <Button className="w-[200px] h-[50px] bg-[darkOrange] hover:bg-white text-black mt-5">
+            <Link href={`${user ? "/" : "/register"}`}>Get Started</Link>
           </Button>
         </div>
       </div>
@@ -72,8 +70,8 @@ export default function Home() {
             your turf is in good hands. Contact us today to find out more about
             how you can start renting out your turf and making some extra cash.
           </p>
-          <Button onClick={handleSignIn} className="bg-white text-black">
-            Start Now
+          <Button className="bg-white text-black">
+            <Link href={`${user ? "/" : "/register"}`}> Start Now</Link>
           </Button>
         </div>
       </div>

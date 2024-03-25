@@ -18,9 +18,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { List_Turf } from "../turf/create";
 import { Notifications } from "./notification";
+import { useRouter } from "next/navigation";
 const Navbar = ({ home = false }: { home?: boolean }) => {
-  const { handleGoogleLogin, handleSignIn, fUser } = useUser();
-
+  const { user } = useUser();
+  const router = useRouter();
   type TLink = {
     link: string;
     name: string;
@@ -55,7 +56,7 @@ const Navbar = ({ home = false }: { home?: boolean }) => {
           </div>
         </div>
         <div className="flex">
-          {fUser ? (
+          {user ? (
             <div className="items-c gap-2">
               <List_Turf
                 trigger={
@@ -78,7 +79,7 @@ const Navbar = ({ home = false }: { home?: boolean }) => {
                       className={`
       ${home ? "text-background" : "text-black"}`}
                     >
-                      {fUser?.displayName?.split(" ")[0]}
+                      {user?.displayName?.split(" ")[0]}
                     </span>
                     <Avatar className="h-[35px] w-[35px]">
                       <AvatarImage
@@ -110,7 +111,9 @@ const Navbar = ({ home = false }: { home?: boolean }) => {
           ) : (
             <div className="items-c gap-2">
               <Button
-                onClick={handleGoogleLogin}
+                onClick={() => {
+                  router.push("/login");
+                }}
                 className={`
       ${home ? "text-background" : "text-black"}
       `}
@@ -121,7 +124,9 @@ const Navbar = ({ home = false }: { home?: boolean }) => {
               </Button>
               <Button
                 variant={"ghost"}
-                onClick={handleSignIn}
+                onClick={() => {
+                  router.push("/register");
+                }}
                 className={`
       ${home ? "text-background" : "text-black"}
       `}

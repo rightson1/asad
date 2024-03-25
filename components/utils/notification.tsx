@@ -36,7 +36,7 @@ export const Notifications = ({ home }: { home: boolean }) => {
   const { user } = useUser();
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    if (!user) return;
+    if (!user?._id) return;
     const q = query(
       collection(db, "notifications"),
       where("to", "==", user._id)

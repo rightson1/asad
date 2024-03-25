@@ -29,6 +29,7 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
   const { loading, customToast, modalOpen, setModalOpen } = useCustomToast();
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const { user } = useUser();
+
   const { mutateAsync: addTurf } = useCreateTurf();
   const [images, setImages] = useState<File[]>([]);
   const [values, setValues] = useState({
@@ -95,6 +96,7 @@ export const List_Turf = ({ trigger }: { trigger: React.ReactNode }) => {
     const { name, value } = e.target;
     setValues((prev) => ({ ...prev, [name]: value }));
   };
+
   return (
     <CustomModal
       title="List a Turf"
